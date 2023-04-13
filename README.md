@@ -40,7 +40,7 @@ with beam.Pipeline(options=options) as p:
     )
 ```
 
-- Write To MySQL
+- Write To Postgres
 
 ```Python
 import apache_beam as beam
