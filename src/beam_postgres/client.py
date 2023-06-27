@@ -160,5 +160,5 @@ def get_connection(config: Dict):
         raise PostgresConnectorError(
             f"Failed to connect postgres, Raise exception: {e}"
         )
-    finally:
+    else:
         conn.close()
