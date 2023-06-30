@@ -135,7 +135,7 @@ class _WriteToPostgresFn(beam.DoFn):
             ]
         )
 
-        query = f"INSERT INTO {self._config['database']}.{self._table}({column_str}) VALUES({value_str});"
+        query = f"INSERT INTO {self._table}({column_str}) VALUES({value_str});"
 
         self._queries.append(query)
 
