@@ -1,12 +1,16 @@
 [tool.poetry]
 name = "beam-postgres-connector"
-version = "0.1.0"
+version = "0.0.0"
 description = "An io connector for PostgreSQL read/write in Apache Beam pipelines."
 authors = ["satokiyo <satokiyo@loop8.biz>"]
 readme = "README.md"
-packages = [{include = "beam_postgres", from = "src"}]
+packages = [
+    {include = "beam_postgres", from = "src"},
+]
 license = "MIT"
 keywords = ["apache beam", "beam", "postgres", "postgresql"]
+homepage = "https://github.com/satokiyo/beam-postgres-connector"
+repository = "https://github.com/satokiyo/beam-postgres-connector"
 
 [tool.poetry.group.dev.dependencies]
 tox = "^4.4.11"
@@ -18,22 +22,22 @@ pytest = "^7.3.0"
 types-psycopg2 = "^2.9.21.9"
 types-python-dateutil = "^2.8.19.12"
 pyproject-flake8 = "^6.0.0.post1"
+poetry = "^1.5.1"
+poetry-dynamic-versioning = "^0.24.0"
 
-
-[tool.poetry.urls]
-Homepage = "https://github.com/satokiyo/beam-postgres-connector"
-
+[tool.poetry-dynamic-versioning]
+enable = true
+style = "pep440"
+format = "{base}"
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
 apache-beam = "^2.46.0"
 psycopg2-binary = "^2.9.6"
 
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.black]
 line-length = 88
@@ -50,7 +54,6 @@ max-line-length = 88
 max-complexity = 18
 ignore = "E203,E266,E402,E501,W503,"
 exclude = ["__pycache__", "__init__.py"]
-
 
 [tool.mypy]
 no_strict_optional = true
@@ -77,7 +80,6 @@ exclude = [
 [[tool.mypy.overrides]]
 module = "apache_beam.*"
 ignore_missing_imports = true
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
