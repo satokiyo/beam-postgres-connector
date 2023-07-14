@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from logging import INFO, getLogger
 import re
-from typing import Dict, Generator, List
+from typing import Dict, Generator
 
 from psycopg2 import Error as PostgresConnectorError
 import psycopg2.extras
@@ -35,7 +35,7 @@ class PostgresClient:
         Raises:
             ~beam_postgres.errors.BeamPostgresClientError
         """
-        self._validate_query(query, [_SELECT_STATEMENT])
+        self._validate_query(query, _SELECT_STATEMENT)
 
         with get_connection(self._config) as conn:
             # buffered is false because it can be assumed that the data size is too large
@@ -68,7 +68,7 @@ class PostgresClient:
         Raises:
             ~beam_postgres.errors.BeamPostgresClientError
         """
-        self._validate_query(query, [_SELECT_STATEMENT])
+        self._validate_query(query, _SELECT_STATEMENT)
         count_query = f"EXPLAIN SELECT * FROM ({query}) as subq"
 
         with get_connection(self._config) as conn:
@@ -110,7 +110,7 @@ class PostgresClient:
         Raises:
             ~beam_postgres.errors.BeamPostgresClientError
         """
-        self._validate_query(query, [_INSERT_STATEMENT])
+        self._validate_query(query, _INSERT_STATEMENT)
 
         with get_connection(self._config) as conn:
             cur = conn.cursor()
@@ -137,16 +137,30 @@ class PostgresClient:
                 )
 
     @staticmethod
-    def _validate_query(query: str, statements: List[str]) -> None:
-        query = query.lstrip()
+    def _validate_query(query: str, statement: str) -> None:
+        def _remove_comments_and_cte(query):
+            # delete comments
+            query = re.sub(r"--.*\n", " ", query)
+            query = re.sub(r"/\*[.\s].*\*/", " ", query, flags=re.DOTALL)
+            # delete new line
+            query = query.replace("\n", " ")
+            # delete cte clause
+            query = re.sub(
+                r"WITH\s+(?:\w+\s+AS\s+\(.+?\)\s*,?\s*)+",
+                "",
+                query,
+                flags=re.IGNORECASE,
+            )
+            return query.strip()
 
-        for statement in statements:
-            if statement and not query.lower().startswith(statement.lower()):
-                raise BeamPostgresClientError(
-                    "Query expected to start with %s statement. Query: %s",
-                    statement,
-                    query,
-                )
+        cleansed_query = _remove_comments_and_cte(query)
+
+        if statement and not cleansed_query.lower().startswith(statement.lower()):
+            raise BeamPostgresClientError(
+                "Query expected to start with %s statement. Query: %s",
+                statement,
+                query,
+            )
 
 
 @contextmanager
