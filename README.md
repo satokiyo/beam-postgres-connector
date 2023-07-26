@@ -82,7 +82,7 @@ See [here][examples] for more examples.
 
 - QuerySplitter
 
-  Split the query by a specified separator string and distribute it for parallel processing across multiple nodes. Specify non-overlapping ranges for each query in the WHERE clause. The processing results will be combined using UNION ALL.
+  Split the query by a specified separator string and distribute it for parallel processing across multiple nodes. Specify non-overlapping ranges for each query in the WHERE clause. The processing results will be combined using UNION ALL. This feature is also effective when dealing with a data volume that cannot fit in the RAM of a single node. (Which would result in an error in Dataflow)
 
 ## License
 
